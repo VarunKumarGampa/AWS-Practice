@@ -1,0 +1,46 @@
+#! /usr/bin/env bash
+#exit scripts of any command is failed
+set -e
+
+read -p "Enter the bucket name to sync: " bucket_name
+
+if [ -z "$bucket_name" ]; then
+    echo "Please enter the bucket name"
+    exit 1
+fi
+
+echo "Objects are syncing. Please wait...!"
+
+
+# Number of random files to create
+num_files=$((RANDOM % 6 + 5))
+
+# Directory to create the files in (change this to your desired path)
+output_dir="/tmp/s3-bash-scripts"
+
+rm -rf $output_dir
+# Create the output directory if it doesn't exist
+mkdir -p "$output_dir"
+
+# Generate the random files
+for ((i = 1; i <= num_files; i++)); do
+    # Generate a random file name (8 random alphanumeric characters)
+    file_name=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1).txt
+    
+    # Generate random content (5 to 10 lines with random alphanumeric strings)
+    line_count=$((RANDOM % 6 + 5))
+    content=""
+    
+    for ((j = 1; j <= line_count; j++)); do
+        random_line=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
+        content+="$random_line"$'\n'
+    done
+
+    # Create the file with the random content
+    echo "$content" > "$output_dir/$file_name"
+    echo "Created file: $file_name with $line_count lines"
+done
+
+tree $output_dir
+
+aws s3 sync $output_dir s3://$bucket_name

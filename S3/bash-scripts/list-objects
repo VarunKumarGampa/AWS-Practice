@@ -1,0 +1,15 @@
+#! /usr/bin/env bash
+
+read -p "Enter bucket name to list the objects: " bucket_name
+
+if [ -z "$bucket_name" ]; then
+    echo "Please enter the bucket name"
+    exit 1
+fi
+
+echo "$bucket_name is listing the object from S3. Please wait...!"
+
+aws s3api list-objects \
+--bucket $bucket_name \
+--query Contents[].Key \
+--output text

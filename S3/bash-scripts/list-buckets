@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+
+echo "Listing the buckets. Please wait...!"
+echo "==List of buckets"
+
+aws s3api list-buckets --query "Buckets[].{Name: Name, CreationDate: CreationDate}" --output json | \
+jq -r '.[] | [.Name, .CreationDate] | @tsv' |  \
+sort -k2 -r | \
+awk -F"\t" '{print $1 "\t" $2}'
+
+# another way
+# aws s3api list-buckets | jq -r '.Buckets | sort_by(.CreationDate) | reverse | .[0:5] | .[] | .Name'

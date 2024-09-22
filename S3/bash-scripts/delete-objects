@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+
+read -p "Enter bucket name to list the objects: " bucket_name
+
+if [ -z "$bucket_name" ]; then
+    echo "Please enter the bucket name"
+    exit 1
+fi
+
+aws s3 rm "s3://$bucket_name" --recursive
+
+echo "objects are deleted"

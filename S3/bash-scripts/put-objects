@@ -1,0 +1,24 @@
+#! /usr/bin/env bash
+#exit scripts of any command is failed
+set -e
+
+read -p "Enter the bucket name to upload a file: " bucket_name
+read -p "Enter the file name or absolute path: " file_name
+
+if [ -z "$bucket_name" ]; then
+    echo "Please enter the bucket name"
+    exit 1
+fi
+
+if [ -z "$file_name" ]; then
+    echo "Please enter the filename name"
+    exit 1
+fi
+
+object_key=$(basename "$file_name")
+
+echo "Uploading new file to bucket. Please wait...!"
+aws s3api put-object \
+--bucket $bucket_name \
+--body $file_name \
+--key $object_key

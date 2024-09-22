@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+
+read -p "Enter to create a bucket: " bucket_name
+
+if [ -z "$bucket_name" ]; then
+    echo "Please enter the bucket name"
+    exit 1
+fi
+
+echo "$bucket_name is creating. Please wait...!"
+
+aws s3api create-bucket \
+--bucket $bucket_name \
+--create-bucket-configuration=LocationConstraint=us-east-2 \
+--query Location \
+--output text
